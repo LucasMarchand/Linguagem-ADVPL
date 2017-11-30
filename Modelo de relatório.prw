@@ -14,13 +14,13 @@ User Function SLCR970()
 
 Private cPerg := 'SLCR970'
 
-Private aDados		:= { { "Do Vcto" 	    	, "", "", "mv_ch1", "D", 	08, 0, 0, "G", ""	, "mv_par01", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", ""	    , "" }, ;
-						 { "Até o Vcto"     	, "", "", "mv_ch2", "D", 	08, 0, 0, "G", ""	, "mv_par02", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", ""	    , "" }, ;
- 						 { "Do Fornec"	     	, "", "", "mv_ch3", "C", 	06, 0, 0, "G", ""	, "mv_par03", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SA3"	    , "" }, ;
- 						 { "Até o Fornec"     	, "", "", "mv_ch4", "C",    06, 0, 0, "G", ""	, "mv_par04", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SA3"	    , "" }, ;
- 						 { "Da Natureza"     	, "", "", "mv_ch5", "C", 	10, 0, 0, "G", ""	, "mv_par05", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SED"	    , "" }, ;
- 						 { "Até a Natureza"     , "", "", "mv_ch6", "C", 	10, 0, 0, "G", ""	, "mv_par06", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SED"	    , "" }, ;
- 						 { "Gerar em"     		, "", "", "mv_ch7", "N", 	 1, 0, 0, "C", ""	, "mv_par07", "Tela"		, "", "", "", "", "Excel"		, "", "", "", "", "Ambos"		, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SED"	    , "" } }
+Private aDados	:= {     { "Do Vcto" 	    	, "", "", "mv_ch1", "D", 	08, 0, 0, "G", ""	, "mv_par01", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", ""	    , "" }, ;
+			 { "Até o Vcto"     	, "", "", "mv_ch2", "D", 	08, 0, 0, "G", ""	, "mv_par02", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", ""	    , "" }, ;
+			 { "Do Fornec"	     	, "", "", "mv_ch3", "C", 	06, 0, 0, "G", ""	, "mv_par03", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SA3"	    , "" }, ;
+			 { "Até o Fornec"     	, "", "", "mv_ch4", "C",    	06, 0, 0, "G", ""	, "mv_par04", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SA3"	    , "" }, ;
+			 { "Da Natureza"     	, "", "", "mv_ch5", "C", 	10, 0, 0, "G", ""	, "mv_par05", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SED"	    , "" }, ;
+			 { "Até a Natureza"     , "", "", "mv_ch6", "C", 	10, 0, 0, "G", ""	, "mv_par06", ""		    , "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SED"	    , "" }, ;
+			 { "Gerar em"     	, "", "", "mv_ch7", "N", 	 1, 0, 0, "C", ""	, "mv_par07", "Tela"	  	    , "", "", "", "", "Excel"			, "", "", "", "", "Ambos"		, "", "", "", "", ""			, "", "", "", "", ""			, "", "", "", "SED"	    , "" } }
 
 AjustaSx1( cPerg, aDados )
 Private cString		:= 'SE2'
@@ -73,33 +73,33 @@ If mv_par07 == 2 .or. mv_par07 == 3		//Funções para gerar em excel
 	//--------------------------------------------------------------+
 	Private cDirTmp		:= GetTempPath()
 	Private cWorkSheet	:= "Contas a pagar"	
-	Private oExcel	 	:= FWMSEXCEL():New() //instancia objeto Excel
+	Private oExcel	 	:= FWMSEXCEL():New() 	// instância objeto Excel
 	
 	//+---------------------------------------------------------------------------------------------------------------------------------------+
 	//|  Opções do objeto oExcel:AddColumn()                                                                                                  |
 	//|  oExcel():AddColumn(< cWorkSheet >, < titulo >, < cColumn >, < nAlign >, < nFormat >, < lTotal >)-> NIL                               |
 	//|  Descrição: Adiciona uma coluna a tabela de uma WorkSheet                                                                             |
 	//+---------------------------------------------------------------------------------------------------------------------------------------+
-	//|  Nome		| Tipo		   | Descrição															| Default	 | Obrigatório |Referência|
+	//|  Nome	| Tipo		| Descrição							    | Default    | Obrigatório |Referência|
 	//+---------------------------------------------------------------------------------------------------------------------------------------+
-	//|  cWorkSheet | Caracteres   | Nome da planilha													| 		 	 |     X	   |          | 
-	//|  titulo	    | Caracteres   | Nome da planilha													| 		 	 |     X	   |          | 
-	//|  cColumn	| Caracteres   | Titulo da tabela que será adicionada								| 		 	 |     X	   |          | 
-	//|  nAlign	    | Numérico     | Alinhamento da coluna ( 1-Left,2-Center,3-Right )					| 		 	 |     X	   |          | 
-	//|  nFormat	| Numérico     | Codigo de formatação ( 1-General,2-Number,3-Monetário,4-DateTime )	| 		 	 |     X	   |          | 
-	//|  lTotal	    | Lógico       | Indica se a coluna deve ser totalizada								| 		 	 |     X	   |          | 
+	//|  cWorkSheet | Caracteres   | Nome da planilha						    | 		 |     X       |          | 
+	//|  titulo	| Caracteres   | Nome da planilha						    | 		 |     X       |          | 
+	//|  cColumn	| Caracteres   | Titulo da tabela que será adicionada				    | 		 |     X       |          | 
+	//|  nAlign	| Numérico     | Alinhamento da coluna ( 1-Left,2-Center,3-Right )		    | 		 |     X       |          | 
+	//|  nFormat	| Numérico     | Codigo de formatação ( 1-General,2-Number,3-Monetário,4-DateTime ) | 		 |     X       |          | 
+	//|  lTotal	| Lógico       | Indica se a coluna deve ser totalizada				    | 		 |     X       |          | 
 	//+---------------------------------------------------------------------------------------------------------------------------------------+
 	
-	oExcel:AddWorkSheet	( cWorkSheet )		//Adiciona aba a tabela
-	oExcel:AddTable( cWorkSheet, titulo )	//Adiciona a tabela
-	oExcel:AddColumn( cWorkSheet, titulo, "Vcto Real"	,	1, 4, .F.)
-	oExcel:AddColumn( cWorkSheet, titulo, "Filial"		,	1, 1, .F.)
-	oExcel:AddColumn( cWorkSheet, titulo, "Prefixo"		,  	1, 1, .F.)
+	oExcel:AddWorkSheet	( cWorkSheet )		//Adiciona aba na tabela
+	oExcel:AddTable( cWorkSheet, titulo )		//Adiciona a tabela
+	oExcel:AddColumn( cWorkSheet, titulo, "Vcto Real"	,   1, 4, .F.)
+	oExcel:AddColumn( cWorkSheet, titulo, "Filial"		,   1, 1, .F.)
+	oExcel:AddColumn( cWorkSheet, titulo, "Prefixo"		,   1, 1, .F.)
 	oExcel:AddColumn( cWorkSheet, titulo, "Nº Título"	,   1, 1, .F.)
 	oExcel:AddColumn( cWorkSheet, titulo, "Tipo"		,   1, 1, .F.)
-	oExcel:AddColumn( cWorkSheet, titulo, "Cód. Fornec.",   1, 1, .F.)                    
+	oExcel:AddColumn( cWorkSheet, titulo, "Cód. Fornec."	,   1, 1, .F.)                    
 	oExcel:AddColumn( cWorkSheet, titulo, "Fornecedor"	,   1, 1, .F.)                 
-	oExcel:AddColumn( cWorkSheet, titulo, "Valor Título",   1, 3, .F.)
+	oExcel:AddColumn( cWorkSheet, titulo, "Valor Título"	,   1, 3, .F.)
 	oExcel:AddColumn( cWorkSheet, titulo, "Natureza"	,   1, 1, .F.)
 	oExcel:AddColumn( cWorkSheet, titulo, "Pedido"		,   1, 1, .F.)
 	oExcel:AddColumn( cWorkSheet, titulo, "Comprador"	,   1, 1, .F.)
@@ -152,8 +152,8 @@ cQuery	+=	"	WHERE  "
 cQuery	+=	"		SE2010.D_E_L_E_T_ = ''  "
 cQuery	+=	"		AND E2_SALDO > 0  "
 cQuery	+=	"		AND E2_TIPO IN ('NF', 'FT', 'INS', 'ISS', 'PA', 'TX')  "
-cQuery	+=	"		AND E2_CODBAR = ''  "     // Sem código de barras não tem como pagar por boleto
-cQuery	+=	"		AND A2_FORMPGT = '2'  "   // 2 = Boleto	 ;	1 = Depósito C/C
+cQuery	+=	"		AND E2_CODBAR = ''  "     	// Sem código de barras não tem como pagar por boleto
+cQuery	+=	"		AND A2_FORMPGT = '2'  "   	// 2 = Boleto	 ;	1 = Depósito C/C
 cQuery	+=	"		AND E2_VENCREA BETWEEN '"+ DTOS(mv_par01) +"' AND '"+ DTOS(mv_par02) +"'  "
 cQuery	+=	"		AND E2_FORNECE BETWEEN '"+ mv_par03 +"' AND '"+ mv_par04 +"'  "
 cQuery	+=	"		AND E2_NATUREZ BETWEEN '"+ mv_par05 +"' AND '"+ mv_par06 +"'  "
@@ -166,14 +166,14 @@ cOrder	+=	"		E2_VENCREA, E2_FILORIG, E2_NOMFOR  "
 cCount2 :=	" ) AS TMP	"
         
 
-dbUseArea( .t., 	'TOPCONN', TCGenQry(,,cCount1 + cQuery + cCount2), 'TMP', .f., .t. )
+dbUseArea( .t., 'TOPCONN', TCGenQry(,,cCount1 + cQuery + cCount2), 'TMP', .f., .t. )
 SetRegua( TMP->nRecnos )
 TMP->( dbCloseArea() )
 dbUseArea( .t., 'TOPCONN', TCGenQry(,, cQuery + cOrder ), 'TMP', .t., .t. )
                                       
 
-TMP->( dbGoTop() )  // se posiciona no ínicio da query..                                                           
-While TMP->( !EOF() )  // enquanto não for o final da query, ele vai fazendo a impressão.	
+TMP->( dbGoTop() )  	// se posiciona no ínicio da query..                                                           
+While TMP->( !EOF() )  	// enquanto não for o final da query, ele vai fazendo a impressão.	
 	IncRegua()
 
 	If lEnd
@@ -181,7 +181,7 @@ While TMP->( !EOF() )  // enquanto não for o final da query, ele vai fazendo a 
 		Exit
 	EndIf 
 
-    // Validações
+    	// Validações
 	cPrefixo := TMP->PREFIXO	
 	If EMPTY(cPrefixo)
 		cPrefixo := '-'  
@@ -190,10 +190,10 @@ While TMP->( !EOF() )  // enquanto não for o final da query, ele vai fazendo a 
 	cComprador := TMP->COMPRADOR
 	cUser := TMP->C7_USER
 	If !EMPTY(cUser)
-		cComprador := UsrFullName(cUser) //Pega o nome completo do comprador pelo SIGACFG
+		cComprador := UsrFullName(cUser) 	//Pega o nome completo do comprador pelo SIGACFG
 	EndIf
 
-	// Aqui eu começo a fazer a impressão dos parâmetros em ...    
+	// Impressão dos parâmetros em :    
 	// TELA
 	If mv_par07 == 1 .or. mv_par07 == 3		
 		If pRow() > 65 .or. m_pag == 1
@@ -219,7 +219,7 @@ While TMP->( !EOF() )  // enquanto não for o final da query, ele vai fazendo a 
 		oExcel:AddRow( cWorkSheet ,titulo, {TMP->VCTO_REAL, TMP->FILIAL, cPrefixo, TMP->NUM_TITULO, TMP->TIPO, TMP->COD_FORNEC, Capitalace(TMP->FORNECEDOR), TMP->VALOR, TMP->NATUREZA, TMP->PEDIDO, Capitalace(cComprador), Capitalace(TMP->ALCADA)} )   
 	EndIf
 	
-	TMP->( dbSkip() ) //pula linha
+	TMP->( dbSkip() ) 	//pula linha
 End
 
 TMP->( dbCloseArea() )
@@ -238,8 +238,8 @@ If mv_par07 == 2 .or. mv_par07 == 3
 	oExcelApp := MsExcel():New()
 	oExcelApp:WorkBooks:Open( cDirTmp + cArq )
 	oExcelApp:SetVisible(.T.)
-	fErase(cArq)   //deleta arquivo do temp do usuario
-	oExcelApp:Destroy() // Deleta o processo do excel para não ficar preso após fechar
+	fErase(cArq)   		//deleta arquivo do temp do usuario
+	oExcelApp:Destroy() 	// Deleta o processo do excel para não ficar preso após fechar
 EndIf	          
 
 // TELA
