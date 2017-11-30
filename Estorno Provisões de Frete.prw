@@ -16,16 +16,16 @@ User Function SLCA900()
 Local aButPed  		:= Array(0)
 Local cQuery		:= ''           
 Local cPerg 		:= 'SLC900A'  //Perguntas SX1                     
-Local lOk	 		:= .f.
+Local lOk	 	:= .f.
 
 Private aList		:= Array( 0 ) 
-Private nTot        := 0
+Private nTot        	:= 0
 Private nNum		:= 0
 Private oDlg1, oDlg2
 Private nOpc		:= 0
 Private oList
-Private oOk	   		:= Loadbitmap( GetResources(), 'LBOK' )
-Private oNo	   		:= Loadbitmap( GetResources(), 'LBNO' )
+Private oOk	   	:= Loadbitmap( GetResources(), 'LBOK' )
+Private oNo	   	:= Loadbitmap( GetResources(), 'LBNO' )
 Private dDate  		:= cToD('')
 
 aAdd( aButPed, { 'PMSINFO', {|| SelectAll( aList ) }, 'Marcar/Desmarcar Todos' } )     // Adicionado um botão no submenu 'Ações Relacionadas'
@@ -163,24 +163,24 @@ If Len(aList) > 0
 	@ aPosObj[2,1]+012,350 Say oTot Var Transform(nTot, "@E 999,999,999.99") Font oFntGet1 Size 300,300 Pixel Colors CLR_HRED Of oDlg1
 	
 	
-	oList:aColSizes := {5,		 15,	  60,		  15,	  40,	   40,		 15,	 30,		   140,		   15,	  35,     40,  	  		 40,			40  	    	}
-					// ListBox | Filial | Documento | Serie	| Data	 | Cliente | Loja  | Cód Produto | Descrição | Item | Total | SD2 - Prov 1 | SD2 - Prov 2 | SD1 - Prov 1 
+	oList:aColSizes := {5,	     15,      60,	  15,	  40,	   40,	     15,     30,	   140,	       15,    35,     40,  	     40,            40  	}
+			// ListBox | Filial | Documento | Serie	| Data	 | Cliente | Loja  | Cód Produto | Descrição | Item | Total | SD2 - Prov 1 | SD2 - Prov 2 | SD1 - Prov 1 
 					
 	oList:SetArray( aList )
 	
 	oList:bHeaderClick := { |oObj,nCol| If( nCol==1, SelectAll( aList ), Nil), oList:Refresh(), oNum:Refresh(), oTot:Refresh() }
 	
 	oList:bLine := { || { ;	
-		Iif( aList[ oList:nAt, 01 ], oOk, oNo ), ; 				// ListBox
-		aList[ oList:nAt, 02 ], ;  								// Filial                         
-		aList[ oList:nAt, 03 ], ;  								// Documento
-		aList[ oList:nAt, 04 ], ;								// Serie
-		sTod(aList[ oList:nAt, 05 ]), ;	  						// Data
-		aList[ oList:nAt, 06 ], ;								// Cliente
-		aList[ oList:nAt, 07 ], ;								// Loja
-		aList[ oList:nAt, 08 ], ;								// Código de Produto
-		aList[ oList:nAt, 09 ], ;								// Descrição
-		aList[ oList:nAt, 10 ], ;								// Item		
+		Iif( aList[ oList:nAt, 01 ], oOk, oNo ), ; 		// ListBox
+		aList[ oList:nAt, 02 ], ;  				// Filial                         
+		aList[ oList:nAt, 03 ], ;  				// Documento
+		aList[ oList:nAt, 04 ], ;				// Serie
+		sTod(aList[ oList:nAt, 05 ]), ;	  			// Data
+		aList[ oList:nAt, 06 ], ;				// Cliente
+		aList[ oList:nAt, 07 ], ;				// Loja
+		aList[ oList:nAt, 08 ], ;				// Código de Produto
+		aList[ oList:nAt, 09 ], ;				// Descrição
+		aList[ oList:nAt, 10 ], ;				// Item		
 		Transform(aList[ oList:nAt, 11 ], "@E 999,999.99"), ;	// Total
 		Transform(aList[ oList:nAt, 12 ], "@E 999,999.99"), ;   // SD2 Prov Frt
 		Transform(aList[ oList:nAt, 13 ], "@E 999,999.99"), ;   // SD2 Prov Frt 2
@@ -298,7 +298,7 @@ If lProced
 	Define MsDialog oDlg2 Title "Data de Estorno" From 074,060 To 200,248 Pixel Of oMainWnd
 	
    //	@ 020,013 Say OemToAnsi("Data de estorno :") 		Size 020,018 of oDlg2 PIXEL
-	@ 025,020 MsGet dDate           					Size 060,010 of oDlg2 PIXEL
+	@ 025,020 MsGet dDate           			Size 060,010 of oDlg2 PIXEL
 	
 	Activate Dialog oDlg2 Centered On Init EnchoiceBar( oDlg2, { || nOpc := 1 , oDlg2:End() }, { || nOpc := 2, oDlg2:End() },,,,,,,.F. )
 	        
@@ -319,9 +319,9 @@ Static Function WriteData ( aList )
 
 For i := 1 To Len( aList )
    
-	If aList[i][1]	// Se estiver selecionado
+	If aList[i][1]		// Se estiver selecionado
 							
-    	If aList[i][14] > 0		// SD1 Prov Frt
+    		If aList[i][14] > 0	// SD1 Prov Frt
     	
   			dbSelectArea( 'SD1' )
   			dbSetOrder( 1 )		//Filial + Doc + Serie + Fornecedor + Loja + Cod Produto + Item
