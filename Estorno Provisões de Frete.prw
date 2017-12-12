@@ -1,6 +1,5 @@
 #include 'protheus.ch'
-#include 'rwmake.ch'
-#include 'totvs.ch'
+
 /*___________________________________________________________________________
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ||-------------------------------------------------------------------------||
@@ -195,7 +194,8 @@ If Len(aList) > 0
 	If lOk	               
 	
         MSAguarde ({ || WriteData( aList ) }, "Aguarde", "Gravando dados no banco..." )  
-                       		
+        MsgInfo( 'Estorno realizado com sucesso!' )  
+	
 	EndIf                                                                                                                                                                   		
 Else                           
 
