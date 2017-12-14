@@ -5,7 +5,7 @@
 ||-------------------------------------------------------------------------||
 || Função: SLCF1050      || Autor: Lucas Rocha          || Data: 05/12/17  ||
 ||-------------------------------------------------------------------------||
-|| Descrição: Ajuste de usuários nos parâmetros da SX6					   ||		                                   
+|| Descrição: Ajuste de usuários nos parâmetros da SX6			   ||		                                   
 ||-------------------------------------------------------------------------||
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/                                            
@@ -13,22 +13,22 @@
 User Function SLCF1060()
 
 //////////////////////////////////
-// 			Variáveis  			//
+// 	    Variáveis  		//
 //////////////////////////////////
-Local cPerg		:= 'SLCF1060'
+Local cPerg	:= 'SLCF1060'
 Local lCond 	:= ''
 Local lCond1	:= ''
-Local lMsg		:= .F.
-Local lMsg1		:= .F.
+Local lMsg	:= .F.
+Local lMsg1	:= .F.
 Local cString   := ''
-Local cX6		:= ''
-Local cDiv		:= ''
-Local nOpc		:= 0
+Local cX6	:= ''
+Local cDiv	:= ''
+Local nOpc	:= 0
 Local cDir    	:= '\logs\'
 Local cArq    	:= 'LogSX6_' + DTOS( DATE() )  + '_' + SUBSTR(TIME(), 1, 2) + SUBSTR(TIME(), 4, 2) + SUBSTR(TIME(), 7, 2) + '.txt' 
 Local nHandle 	:= 0
 
-Private mv1		 := 0
+Private mv1	 := 0
 Private mv2_name := Space(30)
 Private mv3_name := Space(30)
 Private mv2_id	 := Space(6)
@@ -37,7 +37,7 @@ Private cDiv1  	 := ''
 Private cLog	 := '' 
 
 //////////////////////////////////
-// 	   	 Desenvolvimento 		//
+// 	 Desenvolvimento 	//
 //////////////////////////////////
 ValidPerg( cPerg )
 If !Pergunte( cPerg, .T. )
@@ -72,7 +72,7 @@ dbGoTop()
 WHILE !EOF()
 	cX6 	:= AllTrim( X6_CONTEUD )
 	cDiv1 	:= ''
-    cDiv 	:= F1060PegaDiv( cX6 )	// Pega o caractere que separa os usuários
+	cDiv 	:= F1060PegaDiv( cX6 )	// Pega o caractere que separa os usuários
     
          
 	If ( mv1 == 1 ) .AND. !( mv3_name $ cX6 )		// Substituir
@@ -124,7 +124,6 @@ SX6->( dbSetFilter( { || &lCond }, lCond) )
 Count TO nLinha1		
 If nLinha1 == 0
 	lMsg1 := .T.
-
 EndIf    
 
 dbGoTop()
@@ -133,7 +132,7 @@ dbGoTop()
 WHILE !EOF()
 	cX6 	:= AllTrim( X6_CONTEUD )
 	cDiv1 	:= ''	
-    cDiv 	:= F1060PegaDiv( cX6 )		// Pega o caractere que separa os usuários
+	cDiv 	:= F1060PegaDiv( cX6 )		// Pega o caractere que separa os usuários
     
          
 	If ( mv1 == 1 ) .AND. !( mv3_id $ cX6 )		// Substituir
@@ -185,7 +184,7 @@ EndIf
 Return
 
 //////////////////////////////////
-// 	   		Funções  			//
+// 	     Funções  		//
 //////////////////////////////////
 ********************************************************************************
 Static Function ValidPerg(cPerg)  	// Cria o grupo de perguntas 
@@ -225,7 +224,7 @@ Static Function F1060ValidParam()		// Validações dos campos de pergunta
 Local lRet 	:= .F.
 Local mv2 	:= AllTrim( mv_par02 )
 Local mv3	:= AllTrim( mv_par03 ) 
-cLog += dToC(date()) + Space(1) + Time() + Chr(13) + Chr(10) + Chr(13) + Chr(10) + 'Função: '
+cLog  +=  dToC(date()) + Space(1) + Time() + Chr(13) + Chr(10) + Chr(13) + Chr(10) + 'Função: '
 
 If ( mv1 == 1 ) 
 	If Empty( mv2 ) .or. Empty( mv3 )	
