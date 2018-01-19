@@ -85,11 +85,10 @@ WHILE !EOF()
 	ElseIf ( mv1 == 2 ) .AND. !( mv3_name $ cX6 )	// Espelhar
 	
 		If SUBSTR( cX6, AT(mv2_name, cX6) + LEN(mv2_name), LEN('@slcalimentos') ) == '@slcalimentos'   // Se estiver gravado como e-mail	    	
-	    	cString := cX6 + cDiv1 + mv3_name + '@slcalimentos.com.br' + cDiv  
-	    	
+	    		
+			cString := cX6 + cDiv1 + mv3_name + '@slcalimentos.com.br' + cDiv  	    	
 	 	Else		
-			cString := cX6 + cDiv1 + mv3_name + cDiv 
-						       
+			cString := cX6 + cDiv1 + mv3_name + cDiv 						       
 		EndIf
 											
 	ElseIf ( mv1 == 3 )	// Excluir    
