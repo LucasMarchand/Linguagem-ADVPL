@@ -4,7 +4,7 @@
 /*___________________________________________________________________________
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ||-------------------------------------------------------------------------||
-|| Função: SLCF1050      || Autor: Lucas Rocha          || Data: 05/12/17  ||
+|| Função: SLCF1060      || Autor: Lucas Rocha          || Data: 05/12/17  ||
 ||-------------------------------------------------------------------------||
 || Descrição: Ajuste de usuários nos parâmetros da SX6			   ||		                                   
 ||-------------------------------------------------------------------------||
@@ -14,7 +14,7 @@
 User Function SLCF1060()
 
 //////////////////////////////////
-// 	   Variáveis  		//
+// 	    Variáveis  		//
 //////////////////////////////////
 Local cPerg	:= 'SLCF1060'
 Local lCond 	:= ''
@@ -43,6 +43,8 @@ Private oOk	 := Loadbitmap( GetResources(), 'LBOK' )
 Private oNo	 := Loadbitmap( GetResources(), 'LBNO' )
 Private aButPed  := Array(0) 
 Private lGok
+Private cFunc
+Private cParams
 
 //////////////////////////////////
 // 	 Desenvolvimento 	//
@@ -62,7 +64,7 @@ EndIf
 
 // Se os parâmetros estão Ok começa a busca na SX6      
 dbSelectArea('SX6')               
-SX6->( dbSetOrder(1) )
+SX6->( dbSetOrder(1) )          
 
 // Pesquisa pelo NOME do usuário
 lCond	:= ' "' + mv2_name + '" $ X6_CONTEUD '
@@ -76,22 +78,23 @@ WHILE !EOF()
 	lAltera	:= .T.
 	cX6 	:= AllTrim( X6_CONTEUD )
 	cDiv1 	:= ''
-	cDiv 	:= F1060PegaDiv( cX6 )	// Pega o caractere que separa os usuários    
+    	cDiv 	:= F1060PegaDiv( cX6 )	// Pega o caractere que separa os usuários    
          
-	If ( mv1 == 1 ) .AND. !( mv3_name $ cX6 )	// Substituir
+	If ( mv1 == 1 ) .AND. !( mv3_name $ cX6 )	// Substituir
 	   
 		cString := StrTran( cX6, mv2_name, mv3_name )			       
 	
-	ElseIf ( mv1 == 2 ) .AND. !( mv3_name $ cX6 )	// Espelhar
+	ElseIf ( mv1 == 2 ) .AND. !( mv3_name $ cX6 ) 	// Espelhar
 	
 		If SUBSTR( cX6, AT(mv2_name, cX6) + LEN(mv2_name), LEN('@slcalimentos') ) == '@slcalimentos'   // Se estiver gravado como e-mail	    	
-	    		
-			cString := cX6 + cDiv1 + mv3_name + '@slcalimentos.com.br' + cDiv  	    	
+	    		cString := cX6 + cDiv1 + mv3_name + '@slcalimentos.com.br' + cDiv  
+	    	
 	 	Else		
-			cString := cX6 + cDiv1 + mv3_name + cDiv 						       
+			cString := cX6 + cDiv1 + mv3_name + cDiv 
+						       
 		EndIf
 											
-	ElseIf ( mv1 == 3 )	// Excluir    
+	ElseIf ( mv1 == 3 )		// Excluir    
 
 		If SUBSTR( cX6, AT(mv2_name, cX6) + LEN(mv2_name) , LEN('@slcalimentos') ) == '@slcalimentos' 						
 			cString := StrTran( cX6, mv2_name + '@slcalimentos.com.br' + cDiv, '' ) 	// Se possuir divisor irá excluir 
@@ -136,7 +139,7 @@ WHILE !EOF()
 	lAltera	:= .T.
 	cX6 	:= AllTrim( X6_CONTEUD )
 	cDiv1 	:= ''	
-	cDiv 	:= F1060PegaDiv( cX6 )		// Pega o caractere que separa os usuários
+    	cDiv 	:= F1060PegaDiv( cX6 )		// Pega o caractere que separa os usuários
     
          
 	If ( mv1 == 1 ) .AND. !( mv3_id $ cX6 )		// Substituir
@@ -172,21 +175,19 @@ SX6->( dbCloseArea() )
 // Criar tela
 If Len(aList) > 0
 	If F1060MontaTela() 		
-		MSAguarde ({ || F1060Grava() }, "Aguarde", "Gravando dados no banco..." )
-		If lGok	// Se foi gravado corretamente				
-			// Salvar cLog ==> Na pasta '\TOTVS 12\Microsiga\Protheus_Data\logs\LogSX6_Data_Hora'
-			nHandle := FCreate( cDir + cArq )
+		MSAguarde ({ || F1060Grava() }, "Aguarde", "Gravando dados no banco..." )		
+		// Salvar cLog ==> Na pasta '\TOTVS 12\Microsiga\Protheus_Data\logs\LogSX6_Data_Hora'
+		nHandle := FCreate( cDir + cArq )
+		
+		If nHandle < 0
+			MsgAlert( 'Erro durante a gravação do log. Verifique se existe o caminho: ' + cDir + cArq  )
 			
-			If nHandle < 0
-				MsgAlert( 'Erro durante a gravação do log. Verifique se existe o caminho: ' + cDir + cArq  )
-				
-			Else
-				FWrite( nHandle, cLog )
-				FClose( nHandle )
-				MsgInfo( 'Log salvo no diretório "Protheus_Data' + cDir + cArq + '"' ) 
-				
-			EndIf   		
-		EndIf
+		Else
+			FWrite( nHandle, cLog )
+			FClose( nHandle )
+			MsgInfo( 'Log salvo no diretório "Protheus_Data' + cDir + cArq + '"' ) 
+			
+		EndIf   		
 	Else
 		Return U_SLCF1060()
 		
@@ -217,9 +218,9 @@ cPerg := Padr(cPerg,10)
 aRegs:={}
 
 // Grupo/Ordem/Pergunta              /p2/03/Var     /Tip/T/D/P/GSC/Va/V1        /D1/D2/D3/Ct/V2/D1/D2/D3/Ct/V3/D1/D2/D3/C3/V4/D1/D2/D3/Ct/V5/D1/D2/D3/Ct/F3/XG                                            
-aAdd (aRegs, {cPerg, "01", "O que fazer	:				", "","", 	"mv_ch1", "N",  1,0,0, 	"C","","mv_par01","Substituir"	,"","","","","Espelhar"		,"","","","","Excluir"	,"","","","","","","","","","","","","","","","",""})
-aAdd (aRegs, {cPerg, "02", "Usuário Com Parâmetros :	", "","", 	"mv_ch2", "C", 30,0,0, 	"G","","mv_par02",""	    	,"","","","",""    			,"","","","",""      	,"","","","","","","","","","","","","","","","USR",""})
-aAdd (aRegs, {cPerg, "03", "Usuário Sem Parâmetros :	", "","", 	"mv_ch3", "C", 30,0,0, 	"G","","mv_par03","" 	   		,"","","","",""    			,"","","","",""      	,"","","","","","","","","","","","","","","","USR",""})
+aAdd (aRegs, {cPerg, "01", "Função	:					", "","", 	"mv_ch1", "N",  1,0,0, 	"C","","mv_par01","Substituir","Substituir","Substituir",""		,"","Espelhar","Espelhar","Espelhar",""		,"","Excluir","Excluir","Excluir","","","","","","","","","","","","","","",""})
+aAdd (aRegs, {cPerg, "02", "Usuário parametrizado :		", "","", 	"mv_ch2", "C", 30,0,0, 	"G","","mv_par02","","","",""	,"","","","",""		,"","","","",""		,"","","","",""		,"","","","",""		,"USR","","",""})
+aAdd (aRegs, {cPerg, "03", "Usuário não-parametrizado :	", "","", 	"mv_ch3", "C", 30,0,0, 	"G","","mv_par03","","","",""	,"","","","",""		,"","","","",""		,"","","","",""		,"","","","",""		,"USR","","",""})
 
 For i:=1 to Len(aRegs)
 	If !dbSeek(cPerg+aRegs[i,2])
@@ -246,34 +247,31 @@ Local mv3	:= AllTrim( mv_par03 )
 cLog += dToC(date()) + Space(1) + Time() + Chr(13) + Chr(10) + Chr(13) + Chr(10) + 'Função: '
 
 If ( mv1 == 1 ) 
-	If Empty( mv2 ) .or. Empty( mv3 )	
-		MsgInfo( 'Ao selecionar a função SUBSTITUIR, os dois campos de usuário devem ser preenchidos.' ) 
-	 
-	ElseIf MsgYesNo( 'Tem certeza que deseja substituir "' + mv2 + '" por "' + mv3 + '".', 'Substituir' ) 
-		cLog += 'Substituir' + Chr(13) + Chr(10) + Chr(13) + Chr(10)
+	If Empty( mv2 ) .or. Empty( mv3 )
+		MsgInfo( 'Ao selecionar a função SUBSTITUIR, os dois campos de usuário devem ser preenchidos.' ) 	 
+	Else
+		cFunc := 'Substituir'
 		lRet := .T.
-		                                                                                     		
 	EndIf
 	
 ElseIf ( mv1 == 2 )
 	If Empty( mv2 ) .or. Empty( mv3 )	
-		MsgInfo( 'Ao selecionar a função ESPELHAR, os dois campos de usuário devem ser preenchidos.' )
-		
-	ElseIf MsgYesNo( 'Tem certeza que deseja espelhar os parâmetros de "' + mv2 + '" para "' + mv3 + '".', 'Espelhar' )
-		cLog += 'Espelhar' + Chr(13) + Chr(10) + Chr(13) + Chr(10)
-		lRet := .T.          
-		
-	EndIf
+		MsgInfo( 'Ao selecionar a função ESPELHAR, os dois campos de usuário devem ser preenchidos.' )		
+	Else
+		cFunc := 'Espelhar'
+		lRet := .T.		
+	EndIf 
+	
 Else
 	If Empty( mv2 )
 		MsgInfo( 'Ao selecionar a função EXCLUIR, é necessáro informar qual usuário no campo "Usuário Com Parâmetros".' )
-				
-	ElseIf MsgYesNo( 'Tem certeza que deseja excluir "' + mv2 + '".', 'Excluir' )		   
-		cLog += 'Excluir' + Chr(13) + Chr(10) + Chr(13) + Chr(10)
-		lRet := .T.
-		
+	Else
+		cFunc := 'Excluir'
+		lRet := .T.		
 	EndIf
 EndIf
+
+cLog += cFunc + Chr(13) + Chr(10) + Chr(13) + Chr(10)
 
 Return lRet            
 
@@ -282,7 +280,7 @@ Static Function F1060PegaUsr()		// Função que captura o Nome e o Id do usuári
 
 
 If IsDigit( Alltrim( mv_par02 ) )
-	mv2_id	 :=	AllTrim( mv_par02 )
+	mv2_id	 := AllTrim( mv_par02 )
 	mv2_name := ''
 	
 	PswOrder( 1 )
@@ -313,9 +311,9 @@ Else
 
 EndIf
 
-cLog += 'Usuário com parâmetros: ' + mv2_id + ' - ' + mv2_name + Chr(13) + Chr(10)
+cLog += 'Usuário parametrizado: ' + mv2_id + ' - ' + mv2_name + Chr(13) + Chr(10)
 
-If mv1 <> 3		// Se não for uma exclusão pega também o campo Usuário Sem Parâmetros
+If mv1 <> 3	// Se não for uma exclusão pega também o campo Usuário Sem Parâmetros
 	If IsDigit( Alltrim( mv_par03 ) )
 		mv3_id	 :=	AllTrim( mv_par03 )
 		mv3_name := ''
@@ -346,7 +344,7 @@ If mv1 <> 3		// Se não for uma exclusão pega também o campo Usuário Sem Par�
 		EndIf                     
 	EndIf
 	
-	cLog += 'Usuário sem parâmetros: ' + mv3_id + ' - ' + mv3_name + Chr(13) + Chr(10)	
+	cLog += 'Usuário não-parametrizado: ' + mv3_id + ' - ' + mv3_name + Chr(13) + Chr(10)
 	
 EndIf 
 
@@ -355,7 +353,7 @@ cLog += Chr(13) + Chr(10)
 Return .T.
 
 ********************************************************************************
-Static Function F1060PegaDiv( cX6 )		// Pega o caracter separador de usuários
+Static Function F1060PegaDiv( cX6 )	// Pega o caracter separador de usuários
     
 Local cDiv	:= ""
 
@@ -398,42 +396,7 @@ Else
 	
 EndIf
 
-Return cDiv   
-
-********************************************************************************
-Static Function F1060Grava()    
-
-lGOk := .F.
-For i := 1 To Len( aList )
-  
-	If aList[i][1] .AND. Len( aList[i][9] ) <= 250	// Se estiver selecionado e o tamanho do X6_CONTEUD couber o novo usuário
-	
-		If SX6->( dbSeek( aList[i][2] + aList[i][3] ) )
-		
-	        RecLock("SX6", .F.) 
-	        
-	        	SX6->X6_CONTEUD := aList[i][9]
-	        
-	        MsUnlock()            
-            
-		MsgInfo( 'Parâmetros atualizados com sucesso!' )
-	        lGOk := .T.	               
-	        cLog  +=  aList[i][2] + ' + ' + aList[i][3] + ' -> ' + aList[i][9] + Chr(13) + Chr(10)
-	                    
-	Else
-	    	MsgAlert( 'Não foi possível se posicionar na posição ' + aList[i][2] + ' + ' + aList[i][3] )        
-	        cLog  +=  aList[i][2] + ' + ' + aList[i][3] + ' -> ERRO! Não foi possível se posicionar neste parâmetro.' + Chr(13) + Chr(10)
-	        
-	EndIf
-	ElseIf  Len( aList[i][9] ) > 250
-	
-	    MsgAlert( 'ERRO! O novo conteúdo excede o tamanho do campo' )
-	    lGOk := .F.
-	    cLog  +=  aList[i][2] + ' + ' + aList[i][3] + ' -> ERRO! O novo conteúdo excede o tamanho do campo.' + Chr(13) + Chr(10)		
-	EndIf   
-Next  
-  
-Return                
+Return cDiv             
 
 ********************************************************************************
 Static Function F1060MontaTela()        
@@ -448,20 +411,22 @@ aObjects := {}
 
 AAdd( aObjects, { 100, 100, .t., .t. } )
 AAdd( aObjects, { 100, 030, .t., .f. } )
-aInfo 	:= { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 3, 3 }
+aInfo := { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 3, 3 }
 aPosObj := MsObjSize( aInfo, aObjects )
+
+aSort(aList, , , { | x,y | x[2] + x[3] < y[2] + y[3] })  // Ordena por X6_FIl + X6_VAR
 
 Define msDialog oDlg1 Title 'Seleção de Parâmetros' From aSize[7],0 to aSize[6],aSize[5] OF oMainWnd PIXEL
 
 @ aPosObj[1,1]+000,aPosObj[1,2]  ListBox oList ; //45,05
 Fields Header  '     ' ,'Filial' , 'Variável', 'Tipo', 'Descrição', 'Conteúdo Atual' ;
-Size aPosObj[1,4]-aPosObj[1,2],aPosObj[1,3]-aPosObj[1,1] OF oDlg1 PIXEL ColSizes 60,30 ;
+Size aPosObj[1,4]-aPosObj[1,2],aPosObj[1,3]-aPosObj[1,1] OF oDlg1 PIXEL ColSizes 60,30 ; //555,148
 Pixel Of oDlg1 ;
 On dblClick( aList:=SelectBox( oList:nAt, aList ), oList:Refresh() )
 
 
-oList:aColSizes := {5,		  15,	   25,		 15,	   330,					  330   		}
-		//  ListBox 	| X6_FIL | X6_VAR      | X6_TIPO | X6_DESCRIC + X6_DESC1 + X6_DESC2     | X6_CONTEUD ( cString )
+oList:aColSizes := {15,		  15,	   25,		 15,	   400,	   	  		      500   		    }
+		 // ListBox 	| X6_FIL | X6_VAR      | X6_TIPO | X6_DESCRIC + X6_DESC1 + X6_DESC2 | X6_CONTEUD ( cString )
 				
 oList:SetArray( aList )
 
@@ -472,7 +437,7 @@ oList:bLine := { || { ;
 	AllTrim( aList[ oList:nAt, 02 ] ),  ;			// X6_FIL                         
 	AllTrim( aList[ oList:nAt, 03 ] ),  ;			// X6_VAR
 	AllTrim( aList[ oList:nAt, 04 ] ),  ;			// X6_TIPO   
-	;// X6_DESCRIC + X6_DESC1 + X6_DESC2 => Monta a descrição sem repetição
+;	// X6_DESCRIC + X6_DESC1 + X6_DESC2 => Monta a descrição sem repetição
 	Iif( AllTrim(aList[ oList:nAt, 05 ]) != AllTrim(aList[ oList:nAt, 06 ]), ;
 		Iif ( AllTrim(aList[ oList:nAt, 06 ]) != AllTrim(aList[ oList:nAt, 07 ]), ;
 			AllTrim(aList[ oList:nAt, 05 ]) + ' ' + AllTrim(aList[ oList:nAt, 06 ]) + ' ' + AllTrim(aList[ oList:nAt, 07 ]), ;
@@ -486,7 +451,7 @@ oList:bLine := { || { ;
 oList:nAt:=1
 oList:Refresh()
 
-Activate msDialog oDlg1 Centered On Init EnchoiceBar( oDlg1, { || If ( Confirm( aList ), lOk := .t., lOk := .f. ) , If ( lOk == .t., oDlg1:End(), Nil ) }, { || aList := Array( 0 ), oDlg1:End() },, aButPed)                                                                                                                                                                      		
+Activate msDialog oDlg1 Centered On Init EnchoiceBar( oDlg1, { || If ( Confirm( aList ), lOk := .t., lOk := .f. ) , If ( lOk == .t., oDlg1:End(), Nil ) }, { || aList := Array( 0 ), oDlg1:End() },, aButPed)
 
 GetDRefresh() 
 
@@ -496,12 +461,15 @@ Return lOk
 Static Function SelectBox( nIt, aVector )
 
 If !aVector[ nIt, 1 ]
-	aVector[ nIt, 1 ] := .t.	
+	aVector[ nIt, 1 ] := .t.
+	
 Else	                 
 	aVector[ nIt, 1 ] := .f.
+
 EndIf
     
 oList:Refresh()
+
 Return( aVector ) 
 
 ********************************************************************************
@@ -523,16 +491,65 @@ Return( aVector )
 Static Function Confirm ( aVector )
 
 Local lControle  :=  .F.
+cParams := ''
 
 For i := 1 To Len(aVector)
 	If aVector[i][1]  ==  .T.  // se está marcado
 		lControle  :=  .T.
-		Exit
+
+		If Empty(cParams) 
+			cParams := AllTrim( aVector[i][3] )
+		Else
+			cParams := cParams + ', ' + AllTrim( aVector[i][3] )
+		EndIf
 	EndIf
-Next
+Next i
 
 If !lControle       
-	MsgInfo("Você não selecionou nenhum parâmetro.")	
-EndIf        
+	MsgInfo("Você não selecionou nenhum parâmetro.")
+	Return .F.	
+EndIf
 
-Return lControle 
+If !MsgYesNo("Você tem certeza que deseja " + Lower(cFunc) + " estes parâmetros: " + cParams + " ?", Upper(cFunc))	         
+	Return .F.
+EndIf
+
+Return .T.      
+ 
+********************************************************************************
+Static Function F1060Grava()    
+
+Local cFilVar
+lGOk := .F.
+
+For i := 1 To Len( aList )
+
+	cFilVar := IIF( Empty(aList[i][2]), '     ' + aList[i][3], AllTrim(aList[i][2]) + ' + ' + aList[i][3] )
+  
+	If aList[i][1]  // Se estiver marcado
+		If Len( aList[i][9] ) <= 250	// Se o tamanho do X6_CONTEUD couber o novo usuário
+		
+			If SX6->( dbSeek( aList[i][2] + aList[i][3] ) )
+			
+				RecLock("SX6", .F.) 
+
+				SX6->X6_CONTEUD := aList[i][9]
+
+				MsUnlock()            
+
+				cLog  += cFilVar + ' -> ' + aList[i][9] + Chr(13) + Chr(10) 
+				
+			Else
+				MsgAlert( 'Não foi possível se posicionar na posição "' + aList[i][2] + '" + "' + aList[i][3] + '"! ' )        
+				
+				cLog  +=  cFilVar + ' -> ERRO! Não foi possível se posicionar neste parâmetro.' + Chr(13) + Chr(10)		        
+			EndIf
+		ElseIf  Len( aList[i][9] ) > 250
+		
+		    MsgAlert( 'ERRO! O novo conteúdo excede o tamanho do campo ' + AllTrim(cFilVar) )
+		    cLog  +=  cFilVar + ' -> ERRO! O novo conteúdo excede o tamanho do campo.' + Chr(13) + Chr(10)		
+		EndIf
+	EndIf   
+Next  
+  
+Return
