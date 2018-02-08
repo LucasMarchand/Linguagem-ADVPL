@@ -1,0 +1,30 @@
+/*___________________________________________________________________________
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+||-------------------------------------------------------------------------||
+|| Função: SLCF1070      || Autor: Lucas Rocha          || Data: 05/02/18  ||
+||-------------------------------------------------------------------------||
+|| Descrição: Gatilho no N1_CBASE para formação do N1_ITEM no cadastro do  ||
+|| ativo									  							                                 ||		                                   
+||-------------------------------------------------------------------------||
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/                                            
+#include 'rwmake.ch' 
+
+User Function SLCF1070()
+
+Local cQuery
+Local nItem
+
+cQuery := " SELECT TOP 1 N1_ITEM+1 ITEM FROM SN1010 "
+cQuery += " WHERE D_E_L_E_T_ = '' "
+cQuery += " 	AND N1_CBASE = '" + M->N1_CBASE + "' "
+cQuery += " 	AND N1_FILIAL = '" + xFilial('SN1') + "' "
+cQuery += " ORDER BY N1_ITEM DESC "
+
+dbUseArea( .t., 'TOPCONN', TCGenQry(,,cQuery), 'TMP', .f., .t. )
+
+nItem := STRZERO(TMP->ITEM, 4, 0)
+
+dbCloseArea()
+
+Return nItem
