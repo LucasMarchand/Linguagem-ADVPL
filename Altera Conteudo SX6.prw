@@ -18,11 +18,9 @@ User Function SLCF1060()
 //////////////////////////////////
 Local cPerg	:= 'SLCF1060'
 Local lCond 	:= ''
-Local lCond1	:= ''
 Local cString   := ''
 Local cX6	:= ''
 Local cDiv	:= ''
-Local nOpc	:= 0
 Local cDir    	:= '\logs\'
 Local cArq    	:= 'LogSX6_' + DTOS( DATE() )  + '_' + SUBSTR(TIME(), 1, 2) + SUBSTR(TIME(), 4, 2) + SUBSTR(TIME(), 7, 2) + '.txt' 
 Local nHandle 	:= 0
@@ -37,12 +35,11 @@ Private cDiv1  	 := ''
 Private cLog	 := '' 
 Private aList	 := Array(0)   
 Private oDlg1, oDlg2
-Private nOpc   	 := 0
+Private nMsg	 := 0
 Private oList
 Private oOk	 := Loadbitmap( GetResources(), 'LBOK' )
 Private oNo	 := Loadbitmap( GetResources(), 'LBNO' )
 Private aButPed  := Array(0) 
-Private lGok
 Private cFunc
 Private cParams
 
@@ -510,7 +507,9 @@ If !lControle
 	Return .F.	
 EndIf
 
-If !MsgYesNo("Você tem certeza que deseja " + Lower(cFunc) + " estes parâmetros: " + cParams + " ?", Upper(cFunc))	         
+nMsg := MessageBox("Você tem certeza que deseja " + Lower(cFunc) + " estes parâmetros: " + cParams + " ?", Upper(cFunc), 4)
+
+If nMsg <> 6	         
 	Return .F.
 EndIf
 
@@ -520,7 +519,6 @@ Return .T.
 Static Function F1060Grava()    
 
 Local cFilVar
-lGOk := .F.
 
 For i := 1 To Len( aList )
 
