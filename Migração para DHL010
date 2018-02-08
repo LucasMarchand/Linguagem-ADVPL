@@ -1,0 +1,82 @@
+// #########################################################################################
+// Projeto: Ajustar as alçadas de compras do Protheus 12 que passaram para a DHL
+// Modulo : Compras
+// Fonte  : SLCF1030
+// ---------+-------------------+-----------------------------------------------------------
+// Data     | Autor             | Descricao
+// ---------+-------------------+-----------------------------------------------------------
+// 28/09/17 | Lucas Rocha       | Atualiza DHL conforme valores da SAK
+// ---------+-------------------+-----------------------------------------------------------
+#include 'protheus.ch'
+#include 'rwmake.ch' 
+
+User Function SLCF1030()
+
+Local cQuery	
+Local cQuery1
+Local nCod	:= '000001'
+Local n
+
+// Monta a query que traz os limites mínimos sem repetição da tabela de aprovadores
+cQuery := " SELECT AK_LIMMIN  "
+cQuery += " FROM SAK010  "
+cQuery += " WHERE D_E_L_E_T_ = ''  "
+cQuery += " GROUP BY AK_LIMMIN  "
+
+// Conecta a cQuery no banco
+dbUseArea( .t., 'TOPCONN', TCGenQry(,,cQuery), 'SAK_TMP', .f., .t. )
+
+// Posiciona-se no início das tabelas abaixo
+DHL->( dbSetOrder( 1 ) )  
+SAL->( dbSetOrder( 1 ) )
+
+// While que faz os inserts na tabela DHL
+While SAK_TMP->( !Eof() )
+		
+	DHL->( RecLock( 'DHL', .T. ) ) // Trava o registro para gravação ; .T. => Insert
+	DHL->DHL_COD 	:= nCod // Código identificador dos perfis de aprovação
+	DHL->DHL_DESCRI	:= 'A PARTIR DE R$ ' + AllTrim(Transform(SAK_TMP->AK_LIMMIN, "@E 999,999,999.99"))
+	DHL->DHL_LIMMIN	:= SAK_TMP->AK_LIMMIN
+	DHL->DHL_LIMMAX	:= 999999999.99
+	DHL->DHL_LIMITE	:= 999999999.99
+	DHL->DHL_TIPO	:= 'D'
+	DHL->DHL_MOEDA	:= 1
+
+	DHL->( MsUnlock() ) // Destrava o registro                       
+	
+	// Monta a query que traz só as alçadas com este limite mínimo                              
+	cQuery1 := " SELECT AK_LIMMIN, SAL010.R_E_C_N_O_ AS RECNO, AL_PERFIL  "	 
+	cQuery1 += " FROM SAL010  "
+	cQuery1 += " 	JOIN SAK010  "
+	cQuery1 += " 		ON AK_USER = AL_USER  "
+	cQuery1 += " 		AND AK_COD = AL_APROV  "
+	cQuery1 += " 		AND SAK010.D_E_L_E_T_ = ''  "
+	cQuery1 += " WHERE SAL010.D_E_L_E_T_ = ''  "
+	cQuery1 += " 	AND AK_LIMMIN = " + AllTrim(Str(SAK_TMP->AK_LIMMIN))
+	
+	// Conecta a cQuery no banco
+	dbUseArea( .t., 'TOPCONN', TCGenQry(,,cQuery1), 'SAK_SAL_TMP', .f., .t. )
+	
+	SAK_SAL_TMP->( dbGoTop() ) // Posiciona-se no início da cQuery1  
+	
+	While SAK_SAL_TMP->( !Eof() )
+		SAL->( DbGoTo( SAK_SAL_TMP->RECNO) ) // Posiciona-se no registro da cQuery1 
+		SAL->( RecLock('SAL', .F.) ) // Trava o registro para gravação ; .F. => Update
+		SAL->AL_PERFIL := nCod  // Incrementa o novo campo com o respectivo código de perfil de aprovação
+		
+		SAL->( MsUnlock() )	// Destrava o registro		                       
+	    SAK_SAL_TMP->( dbSkip() ) // Pula a linha
+	End
+	SAK_SAL_TMP->( dbCloseArea() )
+    
+	n := Val(nCod)
+	n := n++
+	nCod := StrZero(n,6)
+
+	SAK_TMP->( dbSkip() ) // Pula a linha
+End                                        
+
+SAK_TMP->( dbCloseArea() )
+MSGALERT( 'Consegui', 'Fim' )
+
+Return
