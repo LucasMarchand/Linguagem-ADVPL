@@ -6,32 +6,32 @@
 ||-------------------------------------------------------------------------||
 || Função: SLCA730      || Autor: Lucas Rocha          || Data: 28/02/18   ||
 ||-------------------------------------------------------------------------||
-|| Descrição: Liberação de fretes de venda e compra de milho			         ||		                                   
+|| Descrição: Liberação de fretes de venda e compra de milho	           ||		                                   
 ||-------------------------------------------------------------------------||
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/                                            
 
 User Function SLCA730()
 
-Local cPerg	   	 := 'SLCA730'
+Local cPerg	 	:= 'SLCA730'
 
-Private cQuery   := ''
-Private cQuery1  := ''
-Private aList	 := Array(0)   
+Private cQuery   	:= ''
+Private cQuery1  	:= ''
+Private aList	 	:= Array(0)   
 Private oDlg
 Private oList               
-Private lOk  	 := .F.  
-Private dVenctos := cToD('')
+Private lOk  	 	:= .F.  
+Private dVenctos 	:= cToD('')
 Private oOk	   	 := Loadbitmap( GetResources(), 'LBOK' )
 Private oNo	   	 := Loadbitmap( GetResources(), 'LBNO' )
-Private oVerde   := Loadbitmap( GetResources(), 'BR_VERDE' )
-Private oVermelho:= Loadbitmap( GetResources(), 'BR_VERMELHO' )
-Private aButPed  := Array(0)                                   
+Private oVerde   	:= Loadbitmap( GetResources(), 'BR_VERDE' )
+Private oVermelho	:= Loadbitmap( GetResources(), 'BR_VERMELHO' )
+Private aButPed  	:= Array(0)                                   
 
 Private aDados    := { 	{ "Situação"			, "", "", "mv_ch1", "N",  01, 0, 0, "C", "" , "mv_par01", "Todos"   , "", "", "", "", "Pendentes"  , "", "", "", "", "Liberados"  	, "", "", "", "", ""      , "", "", "", "", ""      , "", "", "", ""      , "" }, ;
-						            { "Data Digit. de"		, "", "", "mv_ch2", "D",  08, 0, 0, "G", "" , "mv_par02", ""        , "", "", "", "", ""      		, "", "", "", "", ""      		, "", "", "", "", ""      , "", "", "", "", ""      , "", "", "", ""      , "" }, ;
+			{ "Data Digit. de"		, "", "", "mv_ch2", "D",  08, 0, 0, "G", "" , "mv_par02", ""        , "", "", "", "", ""      		, "", "", "", "", ""      		, "", "", "", "", ""      , "", "", "", "", ""      , "", "", "", ""      , "" }, ;
                        	{ "Data Digit. até"		, "", "", "mv_ch3", "D",  08, 0, 0, "G", "" , "mv_par03", ""        , "", "", "", "", ""      		, "", "", "", "", ""      		, "", "", "", "", ""      , "", "", "", "", ""      , "", "", "", ""      , "" }, ;
-                       	{ "Origem"				, "", "", "mv_ch4", "N",  01, 0, 0, "C", "" , "mv_par04", "Todas"   , "", "", "", "", "Compra" 	 	, "", "", "", "", "Venda"		, "", "", "", "", ""      , "", "", "", "", ""      , "", "", "", ""      , "" }  }
+                       	{ "Origem"			, "", "", "mv_ch4", "N",  01, 0, 0, "C", "" , "mv_par04", "Todas"   , "", "", "", "", "Compra" 	 	, "", "", "", "", "Venda"		, "", "", "", "", ""      , "", "", "", "", ""      , "", "", "", ""      , "" }  }
 
 aAdd( aButPed, { 'PMSINFO', {|| SelectAll( aList ) }, 'Marca/Desmarca Todos Pendentes' } )
 aAdd( aButPed, { 'BUDGETY', {|| Libera() }, 'Libera e Altera Vencimentos' } )
@@ -64,7 +64,7 @@ If mv_par04 == 1 .or. mv_par04 == 3
 	cQuery += "     AND A2_LOJA = D1_LOJA "
 	cQuery += "     AND SA2010.D_E_L_E_T_ = '' "
 	cQuery += " WHERE SE2010.D_E_L_E_T_ = '' "
-	//cQuery += "   AND E2_HIST LIKE '%FRETE - OPERACAO MILHO%' "
+//	cQuery += "   AND E2_HIST LIKE '%FRETE - OPERACAO MILHO%' "
 	cQuery += "   AND D2_TP = 'MR' "
 	cQuery += "   AND E2_TIPO = 'FT' "
 	cQuery += "   AND E2_EMIS1 BETWEEN '" + dToS(mv_par02) + "' AND '" + dToS(mv_par03) + "' " 
@@ -129,24 +129,24 @@ DbGoTop()
 While !EOF()     
 
 	aAdd( aList, { 	.F. 				,;
-					Iif( Empty(TMP->E2_USUALIB), .T., .F.) ,;
-					TMP->FILIAL 		,;
-					TMP->NUMERO  		,;
-					TMP->EMISSAO  		,;
-					TMP->DIGIT  		,;
-					TMP->VENCIMENTO  	,;
-					TMP->VENC_REAL  	,;
-					TMP->TRANSP  		,;
-					TMP->LOJA_TRANSP 	,;
-					TMP->NOME_TRANSP  	,;
-					TMP->VALOR  		,;
-					TMP->E2_USUALIB  	,;
-					TMP->E2_DATALIB  	,;
-					TMP->ORIGEM 		,;
-					TMP->E2_PREFIXO		,;
-					TMP->E2_PARCELA		,;
-					TMP->E2_TIPO		} )
-		
+			Iif( Empty(TMP->E2_USUALIB), .T., .F.) ,;
+			TMP->FILIAL 		,;
+			TMP->NUMERO  		,;
+			TMP->EMISSAO  		,;
+			TMP->DIGIT  		,;
+			TMP->VENCIMENTO  	,;
+			TMP->VENC_REAL  	,;
+			TMP->TRANSP  		,;
+			TMP->LOJA_TRANSP 	,;
+			TMP->NOME_TRANSP  	,;
+			TMP->VALOR  		,;
+			TMP->E2_USUALIB  	,;
+			TMP->E2_DATALIB  	,;
+			TMP->ORIGEM 		,;
+			TMP->E2_PREFIXO		,;
+			TMP->E2_PARCELA		,;
+			TMP->E2_TIPO		} )
+
 	dbSkip()
 End
 
@@ -159,7 +159,7 @@ Return
                     
 
 //////////////////////////////////
-// 	   		Funções  			//
+// 	     Funções  		//
 //////////////////////////////////
 ********************************************************************************
 Static Function MontaTela()        
@@ -187,21 +187,21 @@ oList:SetArray( aList )
 oList:bHeaderClick := { |oObj,nCol| If( nCol==1, SelectAll( aList ), Nil), oList:Refresh() }
 
 oList:bLine := { || { ;	
-					Iif( aList[ oList:nAt, 01 ], oOk, oNo ), ;
-					Iif( aList[ oList:nAt, 02 ], oVerde, oVermelho ),;                  
-					aList[ oList:nAt, 03 ],  ;
-					aList[ oList:nAt, 04 ],	;
-					sToD( aList[ oList:nAt, 05 ] ),  	;
-					sToD( aList[ oList:nAt, 06 ] ),  	;
-					sToD( aList[ oList:nAt, 07 ] ),  	;
-					sToD( aList[ oList:nAt, 08 ] ),  	;
-					aList[ oList:nAt, 09 ],  ;
-					aList[ oList:nAt, 10 ],  ;
-					aList[ oList:nAt, 11 ],  ;
-					Transform(aList[ oList:nAt, 12 ], "@E 999,999.99"), ;
-					aList[ oList:nAt, 13 ],  ;
-					sToD( aList[ oList:nAt, 14 ] ),  	;
-					aList[ oList:nAt, 15 ]   ;      					
+			Iif( aList[ oList:nAt, 01 ], oOk, oNo ), ;
+			Iif( aList[ oList:nAt, 02 ], oVerde, oVermelho ),;                  
+			aList[ oList:nAt, 03 ],  ;
+			aList[ oList:nAt, 04 ],	;
+			sToD( aList[ oList:nAt, 05 ] ),  	;
+			sToD( aList[ oList:nAt, 06 ] ),  	;
+			sToD( aList[ oList:nAt, 07 ] ),  	;
+			sToD( aList[ oList:nAt, 08 ] ),  	;
+			aList[ oList:nAt, 09 ],  ;
+			aList[ oList:nAt, 10 ],  ;
+			aList[ oList:nAt, 11 ],  ;
+			Transform(aList[ oList:nAt, 12 ], "@E 999,999.99"), ;
+			aList[ oList:nAt, 13 ],  ;
+			sToD( aList[ oList:nAt, 14 ] ),  	;
+			aList[ oList:nAt, 15 ]   ;      					
 }} 
 
 oList:nAt:=1
@@ -325,7 +325,7 @@ For i := 1 To Len( aList )
 			SE2TMP->( dbCloseArea() )
 			SE2->( DBCloseArea() ) 
 			
-	    EndIf	  	    
+	    	EndIf	  	    
 	EndIf   
 Next
 
@@ -337,23 +337,23 @@ DbGoTop()
 While !EOF()     
 
 	aAdd( aList, { 	.F. 				,;
-					Iif( Empty(TMP->E2_USUALIB), .T., .F.) ,;
-					TMP->FILIAL 		,;
-					TMP->NUMERO  		,;
-					TMP->EMISSAO  		,;
-					TMP->DIGIT  		,;
-					TMP->VENCIMENTO  	,;
-					TMP->VENC_REAL  	,;
-					TMP->TRANSP  		,;
-					TMP->LOJA_TRANSP 	,;
-					TMP->NOME_TRANSP  	,;
-					TMP->VALOR  		,;
-					TMP->E2_USUALIB  	,;
-					TMP->E2_DATALIB  	,;
-					TMP->ORIGEM 		,;
-					TMP->E2_PREFIXO		,;
-					TMP->E2_PARCELA		,;
-					TMP->E2_TIPO		} )
+			Iif( Empty(TMP->E2_USUALIB), .T., .F.) ,;
+			TMP->FILIAL 		,;
+			TMP->NUMERO  		,;
+			TMP->EMISSAO  		,;
+			TMP->DIGIT  		,;
+			TMP->VENCIMENTO  	,;
+			TMP->VENC_REAL  	,;
+			TMP->TRANSP  		,;
+			TMP->LOJA_TRANSP 	,;
+			TMP->NOME_TRANSP  	,;
+			TMP->VALOR  		,;
+			TMP->E2_USUALIB  	,;
+			TMP->E2_DATALIB  	,;
+			TMP->ORIGEM 		,;
+			TMP->E2_PREFIXO		,;
+			TMP->E2_PARCELA		,;
+			TMP->E2_TIPO		} )
 		
 	dbSkip()
 End
@@ -362,21 +362,21 @@ dbCloseArea("TMP")
 
 oList:SetArray( aList )
 oList:bLine := { || { ;	
-					Iif( aList[ oList:nAt, 01 ], oOk, oNo ), ; 
-					Iif( aList[ oList:nAt, 02 ], oVerde, oVermelho ), ;                  
-					aList[ oList:nAt, 03 ], ;
-					aList[ oList:nAt, 04 ],	;
-					sToD( aList[ oList:nAt, 05 ] ), ;
-					sToD( aList[ oList:nAt, 06 ] ), ;
-					sToD( aList[ oList:nAt, 07 ] ), ;
-					sToD( aList[ oList:nAt, 08 ] ), ;
-					aList[ oList:nAt, 09 ],	;
-					aList[ oList:nAt, 10 ], ;
-					aList[ oList:nAt, 11 ], ;
-					Transform(aList[ oList:nAt, 12 ], "@E 999,999.99"), ;
-					aList[ oList:nAt, 13 ], ;
-					sToD( aList[ oList:nAt, 14 ] ),	;
-					aList[ oList:nAt, 15 ]	;
+			Iif( aList[ oList:nAt, 01 ], oOk, oNo ), ; 
+			Iif( aList[ oList:nAt, 02 ], oVerde, oVermelho ), ;                  
+			aList[ oList:nAt, 03 ], ;
+			aList[ oList:nAt, 04 ],	;
+			sToD( aList[ oList:nAt, 05 ] ), ;
+			sToD( aList[ oList:nAt, 06 ] ), ;
+			sToD( aList[ oList:nAt, 07 ] ), ;
+			sToD( aList[ oList:nAt, 08 ] ), ;
+			aList[ oList:nAt, 09 ],	;
+			aList[ oList:nAt, 10 ], ;
+			aList[ oList:nAt, 11 ], ;
+			Transform(aList[ oList:nAt, 12 ], "@E 999,999.99"), ;
+			aList[ oList:nAt, 13 ], ;
+			sToD( aList[ oList:nAt, 14 ] ),	;
+			aList[ oList:nAt, 15 ]	;
 }} 
 
 oList:Refresh()  
