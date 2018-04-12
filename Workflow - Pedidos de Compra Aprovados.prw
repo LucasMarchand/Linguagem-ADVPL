@@ -17,7 +17,7 @@
 User Function SLCF1080()
 
 If IsBlind()
-	PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01" MODULO "COM"  USER "wf" PASSWORD "12345"
+	PREPARE ENVIRONMENT EMPRESA "01" FILIAL "01" MODULO "COM"  USER "workflow" PASSWORD "workflow"
 EndIf
 
 Private cServer		:= GetMV( 'MV_RELSERV' )
@@ -25,7 +25,7 @@ Private cUser		:= GetMV( 'MV_RELACNT' )
 Private cPass		:= GetMV( 'MV_RELPSW' )
 Private lAuth		:= GetMV( 'MV_RELAUTH' )
 Private cGrpMail1	:= SuperGetMv( 'ES_WFPCA1', .T., 'lucas.rocha,' )	// Pessoas do grupo da controladoria. 	Ex.: alice.goebel
-Private cGrpMail2	:= SuperGetMv( 'ES_WFPCA2', .T., 'lucas.rocha,' )	// Pessoas do grupo de compras. 		Ex.: lauro.fonseca
+Private cGrpMail2	:= SuperGetMv( 'ES_WFPCA2', .T., 'lucas.rocha,' )	// Pessoas do grupo de compras. 	Ex.: lauro.fonseca
 Private cSubject	:= 'Pedidos Aprovados'
 Private cBCC		:= '' 
 Private cTexto		:= ''
@@ -44,7 +44,7 @@ cHtmlT2 := ''
 
 // Começa verificando a pasta e o arquivo de controle dos pedidos que já foram enviados por e-mail para não repetí-los
 
-If !ExistDir( cDir )				// Verifica se não existe a pasta criada
+If !ExistDir( cDir )			// Verifica se não existe a pasta criada
 	
 	If !CriaDir() .or. !CriaArq()	// Cria a pasta e o arquivo
 		Return
@@ -52,7 +52,7 @@ If !ExistDir( cDir )				// Verifica se não existe a pasta criada
 
 ElseIf  !File( cDir + cArq )		// Verifica se não existe o arquivo criado
 
-	If !CriaArq()					// Cria o arquivo
+	If !CriaArq()			// Cria o arquivo
 		Return
 	EndIf
 		
@@ -62,9 +62,9 @@ ElseIf aFile[1,3] <= DATE() - 7 	// Verifica se já faz uma semana desde que o a
     	Return
     EndIf 
     			      			
-Else                                // O arquivo está ok
+Else                                	// O arquivo está ok
 				
-	If !LeiaArq()   				// Captura os pedidos que já foram enviados e alimenta o array aDados
+	If !LeiaArq()   		// Captura os pedidos que já foram enviados e alimenta o array aDados
 		Return
 	EndIf			
 
@@ -129,7 +129,7 @@ cHtmlM1F := " 			</tbody> "
 cHtmlM1F += " 		</table> "
 
 // Cabeçalho 2
-cHtmlM2 := "		<p>Não há pedidos novos para mostrar.</p>"
+cHtmlM2  := "		<p>Não há pedidos novos para mostrar.</p>"
 cHtmlM2F := ""
 
 // Fim
@@ -169,25 +169,25 @@ dbUseArea( .t., 'TOPCONN', TCGenQry(,, cQuery ), 'TMP', .t., .t. )		// Abre a co
 TMP->( dbGoTop() )
                         
 While TMP->( !EOF() )
-    cCompr := ' - '
-    lAux1  := .F.
-    lAux2  := .F.
+    	cCompr := ' - '
+    	lAux1  := .F.
+    	lAux2  := .F.
     
-    // Transforma o código de usuário no nome de login e alimenta a variável cCompr
-    PswOrder( 1 )	
+    	// Transforma o código de usuário no nome de login e alimenta a variável cCompr
+    	PswOrder( 1 )	
 	If PswSeek( TMP->C7_USER, .T. )
 		 
 		cCompr := PswRet()[1][2]				
 	EndIf                   
 	
 	// Recebe apenas os pedidos que algúem do grupo controladoria incluiu
-    If cCompr $ cGrpMail1	 
+    	If cCompr $ cGrpMail1	 
         
-        cHtmlT1  += IIf ( count1 % 2 == 1, "	<tr bgcolor='#f2f2f2'> ", "	<tr> " ) 	// Design difierenciado		
-	    cHtmlT1  += AlimentaTabela()
+        	cHtmlT1  += IIf ( count1 % 2 == 1, "	<tr bgcolor='#f2f2f2'> ", "	<tr> " ) 	// Design difierenciado		
+	    	cHtmlT1  += AlimentaTabela()
 	    
-	    count1 	 := count1 + 1
-	    lAux1 := .T.
+	    	count1 	 := count1 + 1
+	    	lAux1 := .T.
 	    	     	       	
    	EndIf
    	
@@ -273,7 +273,7 @@ Return cTo
 *********************************************************************************************************
 Static Function CriaArq()
 
-nHandle := FCreate( cDir + cArq )			// Cria o arquivo
+nHandle := FCreate( cDir + cArq )	// Cria o arquivo
 	
 If nHandle < 0
 	// MsgAlert( 'Erro durante a recriação do arquivo!' )
@@ -287,7 +287,7 @@ Return .T.
 *********************************************************************************************************
 Static Function CriaDir()
 	
-If MakeDir( cDir ) != 0 			   		// Cria a pasta
+If MakeDir( cDir ) != 0 		// Cria a pasta
 	// MsgAlert( 'Erro durante a criação da pasta!' )
 	Return .F.        
 EndIf
@@ -301,7 +301,7 @@ Return .T.
 *********************************************************************************************************
 Static Function DeletaArq()
 
-If FErase(cDir + cArq) < 0 	  				// Deleta o arquivo
+If FErase(cDir + cArq) < 0 	  	// Deleta o arquivo
 	// MsgStop( 'Erro durante a deleção do arquivo!' )
 	Return .F.
 Endif
