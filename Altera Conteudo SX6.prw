@@ -6,7 +6,7 @@
 ||-------------------------------------------------------------------------||
 || Função: SLCF1060      || Autor: Lucas Rocha          || Data: 05/12/17  ||
 ||-------------------------------------------------------------------------||
-|| Descrição: Ajuste de usuários nos parâmetros da SX6	  		   ||		                                   
+|| Descrição: Ajuste de usuários nos parâmetros da SX6			   ||		                                   
 ||-------------------------------------------------------------------------||
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/                                            
@@ -14,19 +14,19 @@
 User Function SLCF1060()
 
 //////////////////////////////////
-// 	    Variáveis		//
+// 	    Variáveis  		//
 //////////////////////////////////
-Local cPerg	 := 'SLCF1060'
-Local lCond 	 := ''
-Local cString    := ''
-Local cX6	 := ''
-Local cDiv	 := ''
-Local cDir    	 := '\logs\'
-Local cArq    	 := 'LogSX6_' 
-Local nHandle 	 := 0
-Local lAltera	 := .F.
+Local cPerg	:= 'SLCF1060'
+Local lCond 	:= ''
+Local cString   := ''
+Local cX6	:= ''
+Local cDiv	:= ''
+Local cDir    	:= '\logs\'
+Local cArq    	:= 'LogSX6_' 
+Local nHandle 	:= 0
+Local lAltera	:= .F.
 
-Private mv1	 := 0
+Private mv1 	 := 0
 Private mv2_name := Space(30)
 Private mv3_name := Space(30)
 Private mv2_id	 := Space(6)
@@ -44,9 +44,9 @@ Private cParams
 Private lDivApos
 Private lDivFim
 
-///////////////////////////////////
-//  	  Desenvolvimento 	 //
-///////////////////////////////////
+//////////////////////////////////
+// 	 Desenvolvimento 	//
+//////////////////////////////////
 ValidPerg( cPerg )
 If !Pergunte( cPerg, .T. )
 	Return
@@ -87,13 +87,13 @@ WHILE !EOF()
 	
 		If SUBSTR( cX6, AT(mv2_name, cX6) + LEN(mv2_name), LEN('@slcalimentos') ) == '@slcalimentos'   // Se estiver gravado como e-mail	    		    	
 
-	    		If lDivFim
-	    			cString := cX6 + mv3_name + '@slcalimentos.com.br' + cDiv
-	    		
-	    		Else
-	    			cString := cX6 + cDiv + mv3_name + '@slcalimentos.com.br' + cDiv  
-	    		
-	    		EndIf 	    	
+			If lDivFim
+				cString := cX6 + mv3_name + '@slcalimentos.com.br' + cDiv
+
+			Else
+				cString := cX6 + cDiv + mv3_name + '@slcalimentos.com.br' + cDiv  
+
+			EndIf 	    	
 
 	 	ElseIf lDivFim		
 			cString := cX6 + mv3_name + cDiv 
@@ -159,7 +159,7 @@ WHILE !EOF()
 		
 		cString := StrTran( cX6, mv2_id, mv3_id )			       
 	
-	ElseIf ( mv1 == 2 ) .AND. !( mv3_id $ cX6 ) 	// Espelhar
+	ElseIf ( mv1 == 2 ) .AND. !( mv3_id $ cX6 ) // Espelhar
 		
 		If lDivFim
 			cString := cX6 + mv3_id + cDiv
@@ -168,7 +168,7 @@ WHILE !EOF()
 			cString := cX6 + cDiv + mv3_id + cDiv
 		
 		EndIf			       											
-	ElseIf ( mv1 == 3 )				// Excluir		
+	ElseIf ( mv1 == 3 )							// Excluir		
 		
 		If lDivApos
 			
@@ -191,7 +191,6 @@ WHILE !EOF()
 END                     
 
 SX6->( dbClearFilter() )
-SX6->( dbCloseArea() )
 
 // Criar tela
 If Len(aList) == 0
@@ -249,9 +248,9 @@ cPerg := Padr(cPerg,10)
 aRegs:={}
 
 // Grupo/Ordem/Pergunta              /p2/03/Var     /Tip/T/D/P/GSC/Va/V1        /D1/D2/D3/Ct/V2/D1/D2/D3/Ct/V3/D1/D2/D3/C3/V4/D1/D2/D3/Ct/V5/D1/D2/D3/Ct/F3/XG                                            
-aAdd (aRegs, {cPerg, "01", "Função :			", "","", 	"mv_ch1", "N",  1,0,0, 	"C","","mv_par01","Substituir","Substituir","Substituir",""		,"","Espelhar","Espelhar","Espelhar",""		,"","Excluir","Excluir","Excluir","","","","","","","","","","","","","","",""})
-aAdd (aRegs, {cPerg, "02", "Usuário parametrizado :	", "","", 	"mv_ch2", "C", 30,0,0, 	"G","","mv_par02","","","",""	,"","","","",""		,"","","","",""		,"","","","",""		,"","","","",""		,"USR","","",""})
-aAdd (aRegs, {cPerg, "03", "Usuário não-parametrizado :	", "","", 	"mv_ch3", "C", 30,0,0, 	"G","","mv_par03","","","",""	,"","","","",""		,"","","","",""		,"","","","",""		,"","","","",""		,"USR","","",""})
+aAdd (aRegs, {cPerg, "01", "Função				", "","", 	"mv_ch1", "N",  1,0,0, 	"C","","mv_par01","Substituir","Substituir","Substituir",""		,"","Espelhar","Espelhar","Espelhar",""		,"","Excluir","Excluir","Excluir","","","","","","","","","","","","","","",""})
+aAdd (aRegs, {cPerg, "02", "Usuário parametrizado :		", "","", 	"mv_ch2", "C", 30,0,0, 	"G","","mv_par02","","","",""	,"","","","",""		,"","","","",""		,"","","","",""		,"","","","",""		,"USR","","",""})
+aAdd (aRegs, {cPerg, "03", "Usuário não-parametrizado :		", "","", 	"mv_ch3", "C", 30,0,0, 	"G","","mv_par03","","","",""	,"","","","",""		,"","","","",""		,"","","","",""		,"","","","",""		,"USR","","",""})
 
 For i:=1 to Len(aRegs)
 	If !dbSeek(cPerg+aRegs[i,2])
@@ -311,7 +310,7 @@ Static Function F1060PegaUsr()		// Função que captura o Nome e o Id do usuári
 
 
 If IsDigit( Alltrim( mv_par02 ) )
-	mv2_id	 :=	AllTrim( mv_par02 )
+	mv2_id	 := AllTrim( mv_par02 )
 	mv2_name := ''
 	
 	PswOrder( 1 )
@@ -384,7 +383,7 @@ cLog += Chr(13) + Chr(10)
 Return .T.
 
 ********************************************************************************
-Static Function F1060PegaDiv( cX6, mv2 )	// Pega o caracter separador de usuários
+Static Function F1060PegaDiv( cX6, mv2 )		// Pega o caracter separador de usuários
     
 Local cDiv	:= ""
 Local cTemp, cTemp1
@@ -399,7 +398,7 @@ EndIf
 
 If cTemp $ "/;,\|"
 	cDiv 	 := cTemp 
-    lDivApos := .T.
+	lDivApos := .T.
 
 ElseIf cTemp1 $ "/;,\|"	
 	cDiv  :=  cTemp1
@@ -431,31 +430,58 @@ Return cDiv
 Static Function F1060MontaTela()        
 
 Local lOk
-//Define Font oFntGet1 Name 'Calibri' Size 30,50 Bold
+Define Font oFntGet1 Name 'TAHOMA' Size 10,15 Bold
+Define Font oFntGet2 Name 'TAHOMA' Size 10,15
 
 aAdd( aButPed, { 'PMSINFO', {|| SelectAll( aList ) }, 'Marcar/Desmarcar Todos' } )     // Adicionado um botão no submenu 'Ações Relacionadas'
 
 aSize	 := MsAdvSize()
-aObjects := {}
+/*
+aSize = {	1=Linha inicial área trabalho,
+		2=Coluna inicial área trabalho,
+		3=Linha final área trabalho,
+		4=Coluna final área trabalho,
+		5=Coluna final dialog (janela),
+		6=Linha final dialog (janela),
+		7=Linha inicial dialog (janela) }*/
 
-AAdd( aObjects, { 100, 100, .t., .t. } )
+// Agora montamos uma array com os elementos da tela:
+// Aonde devemos informar
+// AAdd( aObjects, { Tamanho X (horizontal) , Tamanho Y (vertical), Dimensiona X , Dimensiona Y, Retorna dimensões X e Y ao invés de linha / coluna final } )
+aObjects := {}
 AAdd( aObjects, { 100, 030, .t., .f. } )
-aInfo := { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 3, 3 }
+AAdd( aObjects, { 100, 100, .t., .t. } )
+
+// Montamos a array com o valor da tela, aonde:
+// aInfo := { 1=Linha inicial, 2=Coluna Inicial, 3=Linha Final, 4=Coluna Final, Separação X, Separação Y, Separação X da borda (Opcional), Separação Y da borda (Opcional) }
+aInfo := { aSize[ 1 ], aSize[ 2 ], aSize[ 3 ], aSize[ 4 ], 5, 5, 5, 5 }
+
+// Passamos agora todas as informações para o calculo das dimenções:
+// MsObjSize( aInfo, aObjects, Mantem Proporção , Disposição Horizontal )
 aPosObj := MsObjSize( aInfo, aObjects )
 
 aSort(aList, , , { | x,y | x[2] + x[3] < y[2] + y[3] })  // Ordena por X6_FIl + X6_VAR
 
 Define msDialog oDlg1 Title 'Seleção de Parâmetros' From aSize[7],0 to aSize[6],aSize[5] OF oMainWnd PIXEL
 
-@ aPosObj[1,1]+000,aPosObj[1,2]  ListBox oList ; //45,05
+@ aPosObj[1,1]+001,aPosObj[1,2] Say 'Função: ' Font oFntGet2 Size 300,300 Pixel Of oDlg1
+@ aPosObj[1,1]+001,aPosObj[1,2]+033 Say oFunc Var cFunc Font oFntGet1 Size 300,300 Pixel Colors CLR_HRED Of oDlg1 
+
+@ aPosObj[1,1]+012,110 Say oPessoa1 Var mv2_name Font oFntGet2 Size 300,300 Pixel Of oDlg1
+If mv1 != 3
+	@ aPosObj[1,1]+012,200 Say ' -> ' Font oFntGet2 Size 300,300 Pixel Of oDlg1
+	@ aPosObj[1,1]+012,235 Say oPessoa2 Var mv3_name Font oFntGet2 Size 300,300 Pixel Of oDlg1
+EndIf
+
+@ aPosObj[2,1]+000,aPosObj[2,2]  ListBox oList ; //45,05
 Fields Header  '     ' ,'Filial' , 'Variável', 'Tipo', 'Descrição', 'Conteúdo Atual' ;
-Size aPosObj[1,4]-aPosObj[1,2],aPosObj[1,3]-aPosObj[1,1] OF oDlg1 PIXEL ColSizes 60,30 ; //555,148
+Size aPosObj[2,4]-aPosObj[2,2],aPosObj[2,3]-aPosObj[2,1] OF oDlg1 PIXEL ColSizes 60,30 ; //555,148
 Pixel Of oDlg1 ;
 On dblClick( aList:=SelectBox( oList:nAt, aList ), oList:Refresh() )
 
 
-oList:aColSizes := {15,		15,	  25,	    15,	   	400,	   		 	   500			}
-	//	    ListBox   | X6_FIL 	| X6_VAR  | X6_TIPO   | X6_DESCRIC + X6_DESC1 + X6_DESC2 | X6_CONTEUD ( cString )
+oList:aColSizes := {15,	      15,      25	 15,	   400,				      500 }
+		//  ListBox | X6_FIL | X6_VAR  | X6_TIPO | X6_DESCRIC + X6_DESC1 + X6_DESC2 | X6_CONTEUD ( cString )
 				
 oList:SetArray( aList )
 
@@ -564,11 +590,12 @@ For i := 1 To Len( aList )
 		        	SX6->X6_CONTEUD := aList[i][9]
 		        
 		        	MsUnlock()            
-	         		cLog  += cFilVar + ' -> ' + aList[i][9] + Chr(13) + Chr(10) 
+	            
+				cLog  += cFilVar + ' -> ' + aList[i][9] + Chr(13) + Chr(10) 
 	
 			Else
-		    		MsgAlert( 'Não foi possível se posicionar na posição "' + aList[i][2] + '" + "' + aList[i][3] + '"! ' )        
-		        	cLog  +=  cFilVar + ' -> ERRO! Não foi possível se posicionar neste parâmetro.' + Chr(13) + Chr(10)
+				MsgAlert( 'Não foi possível se posicionar na posição "' + aList[i][2] + '" + "' + aList[i][3] + '"! ' )        
+				cLog  +=  cFilVar + ' -> ERRO! Não foi possível se posicionar neste parâmetro.' + Chr(13) + Chr(10)
 		        
 			EndIf
 		ElseIf  Len( aList[i][9] ) > 250
@@ -578,5 +605,7 @@ For i := 1 To Len( aList )
 		EndIf
 	EndIf   
 Next  
-  
+
+SX6->( dbCloseArea() )
+
 Return
