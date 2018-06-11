@@ -1,4 +1,4 @@
-#include 'protheus.ch'
+include 'protheus.ch'
 #include 'rwmake.ch'
 #include 'fivewin.ch'
 #include 'tbiconn.ch'
@@ -9,7 +9,7 @@
 ||-------------------------------------------------------------------------||
 || Função: SLCF1080      || Autor: Lucas Rocha          || Data: 15/03/18  ||
 ||-------------------------------------------------------------------------||
-|| Descrição: Workflow de pedidos de compra já aprovados 		   ||
+|| Descrição: Workflow de pedidos de compra já aprovados 				   ||
 ||-------------------------------------------------------------------------||
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯*/
@@ -25,10 +25,11 @@ Private cUser		:= GetMV( 'MV_RELACNT' )
 Private cPass		:= GetMV( 'MV_RELPSW' )
 Private lAuth		:= GetMV( 'MV_RELAUTH' )
 Private cGrpMail1	:= SuperGetMv( 'ES_WFPCA1', .T., 'lucas.rocha,' )	// Pessoas do grupo da controladoria. 	Ex.: alice.goebel
-Private cGrpMail2	:= SuperGetMv( 'ES_WFPCA2', .T., 'lucas.rocha,' )	// Pessoas do grupo de compras. 	Ex.: lauro.fonseca
+Private cGrpMail2	:= SuperGetMv( 'ES_WFPCA2', .T., 'lucas.rocha,' )	// Pessoas do grupo de compras. 		Ex.: lauro.fonseca
 Private cSubject	:= 'Pedidos Aprovados'
 Private cBCC		:= '' 
 Private cTexto		:= ''
+Private lFlag		:= .F.
 Private aFile 		:= {}
 Private aDados 		:= {}
 Private cDir 		:= '\controle_wf\'
@@ -44,32 +45,37 @@ cHtmlT2 := ''
 
 // Começa verificando a pasta e o arquivo de controle dos pedidos que já foram enviados por e-mail para não repetí-los
 
-If !ExistDir( cDir )			// Verifica se não existe a pasta criada
+If !ExistDir( cDir )				// Verifica se não existe a pasta criada
 	
 	If !CriaDir() .or. !CriaArq()	// Cria a pasta e o arquivo
 		Return
 	EndIf
 
+	lFlag := .T.
+
 ElseIf  !File( cDir + cArq )		// Verifica se não existe o arquivo criado
 
-	If !CriaArq()			// Cria o arquivo
+	If !CriaArq()					// Cria o arquivo
 		Return
 	EndIf
+
+	lFlag := .T.
 		
-ElseIf aFile[1,3] <= DATE() - 7 	// Verifica se já faz uma semana desde que o arquivo foi criado	    
+// ElseIf aFile[1,3] <= DATE() - 7 	// Verifica se já faz uma semana desde que o arquivo foi criado	    
     
-    If !DeletaArq() .or. !CriaArq()	// Deleta o arquivo velho e recria um novo
-    	Return
-    EndIf 
+//     If !DeletaArq() .or. !CriaArq()	// Deleta o arquivo velho e recria um novo
+//     	Return
+//     EndIf 
     			      			
-Else                                	// O arquivo está ok
+Else                                // O arquivo está ok
 				
-	If !LeiaArq()   		// Captura os pedidos que já foram enviados e alimenta o array aDados
+	If !LeiaArq()   				// Captura os pedidos que já foram enviados e alimenta o array aDados
 		Return
 	EndIf			
 
 EndIf	
 
+aFile := Directory( cDir + cArq, 'D' ) 
 
 // Começa a montar o código HTML ...
 cHtml := " <!DOCTYPE html> "
@@ -132,7 +138,7 @@ cHtmlM1F += " 		</table> "
 cHtmlM2  := "		<p>Não há pedidos novos para mostrar.</p>"
 cHtmlM2F := ""
 
-// Fim
+// Rodapé
 cHtmlF := " 	</body> "
 cHtmlF += " </html> " 
 
@@ -153,8 +159,15 @@ cQuery += "  WHERE C7_CONAPRO = 'L'  "
 cQuery += "  	AND SC7010.D_E_L_E_T_ = ''  "
 cQuery += "  	AND C7_QUJE = 0  "
 cQuery += "  	AND C7_RESIDUO = ''  "
-cQuery += "  	AND CR_DATALIB >= '" + DTOS( DATE() - 7 ) + "' "
 cQuery += "  	AND C7_ENCER <> 'E'  "
+
+If DOW( DATE() ) == 2	// Se for segunda-feira lê a partir de sexta, já que o workflow não está programado para disparar no fim de semana
+	cQuery += "  	AND CR_DATALIB >= '" + DTOS( DATE() - 3 ) + "' "
+ElseIf lFlag .OR. aFile[1,3] < DATE()	// 	Se o arquivo é de ontem, então lê a partir de ontem
+	cQuery += "  	AND CR_DATALIB >= '" + DTOS( DATE() - 1 ) + "' "
+Else	// Se o arquivo foi criado hoje pela manhã, então lê a partir de hoje
+	cQuery += "  	AND CR_DATALIB = '" + DTOS( DATE() ) + "' "
+EndIf
 
 For i := 1 to len( aDados )		// Não traz os pedidos que estão no arquivo de controle, ou seja, os que já foram enviados por e-mail
 	cQuery += " AND NOT ( C7_FILIAL = '" + aDados[i,1] + "' AND C7_NUM = '" + aDados[i,2] + "' AND C7_FORNECE = '" + aDados[i,3] + "' AND C7_LOJA = '" + aDados[i,4] + "' ) "
@@ -169,25 +182,25 @@ dbUseArea( .t., 'TOPCONN', TCGenQry(,, cQuery ), 'TMP', .t., .t. )		// Abre a co
 TMP->( dbGoTop() )
                         
 While TMP->( !EOF() )
-    	cCompr := ' - '
-    	lAux1  := .F.
-    	lAux2  := .F.
-    
-    	// Transforma o código de usuário no nome de login e alimenta a variável cCompr
-    	PswOrder( 1 )	
+	cCompr := ' - '
+	lAux1  := .F.
+	lAux2  := .F.
+
+	// Transforma o nome do login no cód. do usuário e alimenta a variável cCompr
+	PswOrder( 1 )	
 	If PswSeek( TMP->C7_USER, .T. )
 		 
 		cCompr := PswRet()[1][2]				
 	EndIf                   
 	
 	// Recebe apenas os pedidos que algúem do grupo controladoria incluiu
-    	If cCompr $ cGrpMail1	 
+	If cCompr $ cGrpMail1	 
         
-        	cHtmlT1  += IIf ( count1 % 2 == 1, "	<tr bgcolor='#f2f2f2'> ", "	<tr> " ) 	// Design difierenciado		
-	    	cHtmlT1  += AlimentaTabela()
-	    
-	    	count1 	 := count1 + 1
-	    	lAux1 := .T.
+        	cHtmlT1 += IIf ( count1 % 2 == 1, "	<tr bgcolor='#f2f2f2'> ", "	<tr> " ) 	// Design difierenciado		
+		cHtmlT1 += AlimentaTabela()
+
+		count1 	:= count1 + 1
+		lAux1 	:= .T.
 	    	     	       	
    	EndIf
    	
@@ -197,8 +210,8 @@ While TMP->( !EOF() )
 		cHtmlT2 += IIf ( count2 % 2 == 1, "	<tr bgcolor='#f2f2f2'> ", "	<tr> " ) 	// Design difierenciado
 		cHtmlT2 += AlimentaTabela()
 		
-		count2 := count2 + 1
-		lAux2 := .T.
+		count2 	:= count2 + 1
+		lAux2 	:= .T.
 		
 	EndIf 
 	
@@ -237,8 +250,14 @@ If !EnviaEmail()
 	Return
 EndIf
 
+// Se este é o workflow das 8:00 (o arquivo foi criado ontem), deleta e recria um arquivo vazio para função GravaArq() alimentar este arquivo, apenas com os dados atualizados
+If aFile[1,3] < DATE()		    
+    If !DeletaArq() .OR. !CriaArq()		// Deleta e recria o arquivo
+    	Return
+    EndIf 			      			
+EndIf
 
-// Início da gravçaão dos novos pedidos no arquivo controle
+// Início da gravação dos novos pedidos no arquivo controle
 If !GravaArq() 
 	Return
 EndIf
@@ -273,7 +292,7 @@ Return cTo
 *********************************************************************************************************
 Static Function CriaArq()
 
-nHandle := FCreate( cDir + cArq )	// Cria o arquivo
+nHandle := FCreate( cDir + cArq )			// Cria o arquivo
 	
 If nHandle < 0
 	// MsgAlert( 'Erro durante a recriação do arquivo!' )
@@ -287,7 +306,7 @@ Return .T.
 *********************************************************************************************************
 Static Function CriaDir()
 	
-If MakeDir( cDir ) != 0 		// Cria a pasta
+If MakeDir( cDir ) != 0 			   		// Cria a pasta
 	// MsgAlert( 'Erro durante a criação da pasta!' )
 	Return .F.        
 EndIf
@@ -301,7 +320,7 @@ Return .T.
 *********************************************************************************************************
 Static Function DeletaArq()
 
-If FErase(cDir + cArq) < 0 	  	// Deleta o arquivo
+If FErase( cDir + cArq ) < 0 	  				// Deleta o arquivo
 	// MsgStop( 'Erro durante a deleção do arquivo!' )
 	Return .F.
 Endif
@@ -345,7 +364,7 @@ If nHandle < 0
 	Return .F.
 EndIf
  
-FSeek(nHandle, 0, FS_END) 
+FSeek( nHandle, 0, FS_END)  
 FWrite( nHandle, cTexto )
 FClose( nHandle ) 
 
